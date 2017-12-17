@@ -12,9 +12,13 @@ for i in grid_*.csv; do
   PARAMETER=$(echo $i| cut -d'_' -f 2);
   VALUE=$(echo $i| cut -d'_' -f 3);
   SURFACE='gridsurface_'$PARAMETER'_'$VALUE;
-  cat $i $SURFACE > 'gridfull_'$PARAMETER'_'$VALUE
-  mv 'gridfull_'$PARAMETER'_'$VALUE $i
-  rm -rf $SURFACE
+  cat $i $SURFACE > 'gridfull_'$PARAMETER'_'$VALUE;
+  mv 'gridfull_'$PARAMETER'_'$VALUE $i;
+  LINE='gridline_'$PARAMETER'_'$VALUE;
+  cat $i $LINE > 'gridfull_'$PARAMETER'_'$VALUE;
+  mv 'gridfull_'$PARAMETER'_'$VALUE $i;
+  rm -rf $SURFACE;
+  rm -rf $LINE;
 done
 echo 'Removing NaNs...'
 sed -i 's/nan/0/g' ./*.csv

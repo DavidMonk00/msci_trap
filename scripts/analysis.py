@@ -21,18 +21,20 @@ class Data:
 
 class Analysis:
     def __init__(self, data):
+	new_data = [tuple(row) for row in data]
+	self.data = np.unique(new_data)
         self.data = data
     def loadFile(self, filename):
         self.data = Data(filename)
-    def getCentralZcut(self):
+    def getCentralZCut(self):
         line = np.array([i for i in self.data if (i[x] == 0 and i[y] == 0)])
         return line
     def getCentralMinimum(self):
-        line = self.getCentralZcut()
+        line = self.getCentralZCut()
         values = line[:,value]
         min_index = signal.argrelextrema(line[:,value],np.less)[0]
         if (len(min_index) > 0):
-            return line[min_index][0]
+            return line[np.where(line[:,value] == np.amin(line[min_index][:,value]))[0]][0]
         else:
             raise Exception("No minimum")
     def getXYAtMinimumZ(self):
@@ -40,7 +42,7 @@ class Analysis:
         plane = np.array([i for i in self.data if i[z] == z_value])
         return plane
     def getTrapDepth(self):
-        line = self.getCentralZcut()
+        line = self.getCentralZCut()
         max_index = signal.argrelextrema(line[:,value],np.greater)[0]
         try:
             minimum = self.getCentralMinimum()
@@ -91,13 +93,14 @@ class Export:
                 line += (str(self.data_files[i].getTrapRatio())+"\n")
             elif (foo == "Zmin_"):
                 try:
-                    minimum = self.A.getCentralMinimum()
+                    minimum = self.data_files[i].getCentralMinimum()
                 except Exception as e:
                     minimum = [0,0,0,0]
+                print minimum
                 line += (str(minimum[z])+"\n")
             elif (foo == "Emin_"):
                 try:
-                    line += (str(self.A.getCentralMinimum()[value])+"\n")
+                    line += (str(self.data_files[i].getCentralMinimum()[value])+"\n")
                 except Exception as e:
                     line += "0\n"
             f.write(line)
@@ -119,6 +122,9 @@ def main():
     print "Analysing trap ratio..."
     E.parameter("TrapRatio_")
     print "Done."
+    line = E.data_files[0].getCentralZCut()
+    plt.scatter(line[:,z],line[:,value])
+    plt.show()
 
 if (__name__ == '__main__'):
     main()
