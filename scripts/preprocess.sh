@@ -1,5 +1,7 @@
 #!/bin/bash
 P=~/COMSOL/Data/Parameters/scripts
+echo 'Removing NaNs...'
+sed -i 's/NaN/0/g' ./*.txt
 shopt -s nullglob
 echo 'Converting to csv...'
 for i in grid*.txt; do
@@ -20,6 +22,4 @@ for i in grid_*.csv; do
   rm -rf $SURFACE;
   rm -rf $LINE;
 done
-echo 'Removing NaNs...'
-sed -i 's/nan/0/g' ./*.csv
 echo 'Done.'

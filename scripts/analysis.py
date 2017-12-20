@@ -21,8 +21,6 @@ class Data:
 
 class Analysis:
     def __init__(self, data):
-	new_data = [tuple(row) for row in data]
-	self.data = np.unique(new_data)
         self.data = data
     def loadFile(self, filename):
         self.data = Data(filename)
@@ -52,7 +50,7 @@ class Analysis:
             i = 0
             while (line[i][value] == 0):
                 i += 1
-            max_peaks = np.append(line[max_index],line[i]) #Can only be one maximum due to maxwell's equations
+            max_peaks = np.append(line[np.where(line[:,value] == np.amax(line[max_index][:,value]))[0]][0],line[i]) #Can only be one maximum due to maxwell's equations
             max_peaks = max_peaks.reshape(len(max_peaks)/4,4)
             return np.amin(max_peaks[:,value]) - minimum[value]
         else:
@@ -81,7 +79,6 @@ class Export:
         for i in range(len(self.files)):
             param_file = self.files[i][:tools.getDotsInString(self.files[i])[-1]]
             parameters = param_file.split("_")[1:]
-            #print parameters
             line = ""
             for j in range(1,len(parameters),2):
                 line += (parameters[j] + ",")
@@ -122,9 +119,9 @@ def main():
     print "Analysing trap ratio..."
     E.parameter("TrapRatio_")
     print "Done."
-    line = E.data_files[0].getCentralZCut()
-    plt.scatter(line[:,z],line[:,value])
-    plt.show()
+    # line = E.data_files[0].getCentralZCut()
+    # plt.scatter(line[:,z],line[:,value])
+    # plt.show()
 
 if (__name__ == '__main__'):
     main()
