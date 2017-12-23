@@ -21,7 +21,8 @@ class Data:
 
 class Analysis:
     def __init__(self, data):
-        self.data = data
+        arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
+        self.data = data[unique]
     def loadFile(self, filename):
         self.data = Data(filename)
     def getCentralZCut(self):
@@ -36,7 +37,7 @@ class Analysis:
         else:
             raise Exception("No minimum")
     def getXYAtMinimumZ(self):
-        z_value = self.getCentralMinimum()[z]
+        z_value = 4*(int(self.getCentralMinimum()[z])/4)
         plane = np.array([i for i in self.data if i[z] == z_value])
         return plane
     def getTrapDepth(self):
@@ -59,6 +60,45 @@ class Analysis:
         return np.amax(self.data[:,value])
     def getTrapRatio(self):
         return self.getTrapDepth()/self.getMaximumE()
+
+class Eccentricity:
+    def __init__(self, analysis, limits):
+        self.analysis = analysis
+        self.xy = self.analysis.getXYAtMinimumZ()
+        self.mask_limits = limits
+    def plotXY(self,plane):
+        x = np.unique(plane[:,0])
+        y = np.unique(plane[:,1])
+        plane_array = plane[:,3].reshape(len(x), len(y))
+        plt.contour(y,x,plane_array,20)
+        plt.axis('equal')
+        plt.colorbar()
+        plt.show()
+    def plotScatter(self,contour):
+        plt.scatter(contour[:,0],contour[:,1])
+        plt.show()
+    def maskPlane(self,xmax,ymax):
+        plane = self.xy[np.where(np.abs(self.xy[:,0])<ymax)]
+        return plane[np.where(np.abs(plane[:,1])<xmax)]
+    def getMinimum(self,plane):
+        return plane[np.where(plane[:,3] == np.amin(plane[:,3]))][0]
+    def getContour(self,plane,value,error):
+        return plane[np.where(np.abs(plane[:,3]-value)<(value*error))]
+    def getAxes(self,contour):
+        r = np.sqrt(np.sum(contour[:,:2]**2,axis=1))
+        a = contour[np.argmax(r)][:2]
+        angles = []
+        a_norm = a/np.linalg.norm(a)
+        for i in contour[:,:2]:
+            angles.append(np.dot(a_norm,i/np.linalg.norm(i)))
+        angles = np.abs(np.array(angles))
+        b = contour[np.where(np.abs(angles == np.amin(angles)))][0][:2]
+        return (a,b)
+    def calculate(self,max_e,error):
+        masked = self.maskPlane(self.mask_limits[0], self.mask_limits[1])
+        contour = self.getContour(masked,max_e*self.getMinimum(masked)[3],error)
+        axes = self.getAxes(contour)
+        return np.linalg.norm(axes[0])/np.linalg.norm(axes[1])
 
 class Export:
     def __init__(self,parameter):
@@ -100,6 +140,9 @@ class Export:
                     line += (str(self.data_files[i].getCentralMinimum()[value])+"\n")
                 except Exception as e:
                     line += "0\n"
+            elif (foo == "Eccentricity_"):
+                E = Eccentricity(self.data_files[i],(50,70))
+                line += (str(E.calculate(1.2, 0.02))+"\n")
             f.write(line)
         f.close()
 
@@ -118,6 +161,8 @@ def main():
     E.parameter("Emax_")
     print "Analysing trap ratio..."
     E.parameter("TrapRatio_")
+    print "Analysing eccentricity..."
+    E.parameter("Eccentricity_")
     print "Done."
     # line = E.data_files[0].getCentralZCut()
     # plt.scatter(line[:,z],line[:,value])
