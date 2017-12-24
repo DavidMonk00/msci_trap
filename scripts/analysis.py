@@ -115,7 +115,7 @@ class Export:
         for i in range(0,len(parameters),2):
             filename += (parameters[i]+"_")
         filename = filename[:-1] + ".analysis"
-        f = open(filename,"w")
+        f = open(filename,"a")
         for i in range(len(self.files)):
             param_file = self.files[i][:tools.getDotsInString(self.files[i])[-1]]
             parameters = param_file.split("_")[1:]
@@ -141,10 +141,20 @@ class Export:
                 except Exception as e:
                     line += "0\n"
             elif (foo == "Eccentricity_"):
-                E = Eccentricity(self.data_files[i],(50,70))
-                line += (str(E.calculate(1.2, 0.02))+"\n")
+                try:
+                    E = Eccentricity(self.data_files[i],(50,70))
+                    e = E.calculate(1.2, 0.02)
+                except Exception as e:
+                    e = 0
+                line += (str(e)+"\n")
             f.write(line)
         f.close()
+
+def removeDuplicates():
+    for f in glob("*.analysis"):
+        data = np.loadtxt(f,delimiter=",")
+        arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
+        np.savetxt(f, data[unique], delimiter=',')
 
 def main():
     parser = argparse.ArgumentParser(description="Analyses COMSOL data.")
@@ -163,6 +173,8 @@ def main():
     E.parameter("TrapRatio_")
     print "Analysing eccentricity..."
     E.parameter("Eccentricity_")
+    print "Removing duplicate entries..."
+    removeDuplicates()
     print "Done."
     # line = E.data_files[0].getCentralZCut()
     # plt.scatter(line[:,z],line[:,value])
