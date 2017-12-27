@@ -68,46 +68,63 @@ class Analysis:
     def __init__(self, data):
         arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
         self.data = data[unique]
+        self.zcut = np.empty(0)
+        self.minimum = np.zeros(4)
+        self.xy = None
+        self.trap_depth = None
+        self.max_e = None
     def loadFile(self, filename):
         self.data = Data(filename)
     def getCentralZCut(self):
         line = np.array([i for i in self.data if (i[x] == 0 and i[y] == 0)])
         line[:,value] = savitzky_golay(line[:,value],11,4)
-        return line
+        self.zcut = line
+        return self.zcut
     def getCentralMinimum(self):
-        line = self.getCentralZCut()
-        values = line[:,value]
-        min_index = signal.argrelextrema(line[:,value],np.less)[0]
+        if (len(self.zcut) == 0):
+            self.getCentralZCut()
+        if (self.minimum.all() != 0):
+            return self.minimum
+        values = self.zcut[:,value]
+        min_index = signal.argrelextrema(self.zcut[:,value],np.less)[0]
         if (len(min_index) > 0):
-            return line[np.where(line[:,value] == np.amin(line[min_index][:,value]))[0]][0]
-        else:
-            raise Exception("No minimum")
+            self.minimum = self.zcut[np.where(self.zcut[:,value] == np.amin(self.zcut[min_index][:,value]))[0]][0]
+        return self.minimum
     def getXYAtMinimumZ(self):
-        z_value = 4*(int(self.getCentralMinimum()[z])/4)
-        plane = np.array([i for i in self.data if i[z] == z_value])
-        return plane
+        if (self.minimum.any() == False):
+            self.getCentralMinimum()
+        if (self.minimum.any() == False):
+            raise "No minimum."
+        else:
+            z_value = 4*(int(self.minimum[z])/4)
+            self.xy = np.array([i for i in self.data if i[z] == z_value])
+            return self.xy
     def getTrapDepth(self):
-        line = self.getCentralZCut()
-        max_index = signal.argrelextrema(line[:,value],np.greater)[0]
-        try:
-            minimum = self.getCentralMinimum()
-            print minimum[value]
-        except Exception as e:
-            return 0
+        if (self.minimum.any() == False):
+            self.getCentralMinimum()
+        if (self.minimum.any() == False):
+            self.trap_depth = 0
+            return self.trap_depth
+        max_index = signal.argrelextrema(self.zcut[:,value],np.greater)[0]
         if (len(max_index) > 0):
             i = 0
-            while (line[i][value] == 0):
+            while (self.zcut[i][value] == 0):
                 i += 1
-            max_peaks = np.append(line[np.where(line[:,value] == np.amax(line[max_index][:,value]))[0]][0],line[i]) #Can only be one maximum due to maxwell's equations
+            max_peaks = np.append(self.zcut[np.where(self.zcut[:,value] == np.amax(self.zcut[max_index][:,value]))[0]][0],self.zcut[i]) #Can only be one maximum due to maxwell's equations
             max_peaks = max_peaks.reshape(len(max_peaks)/4,4)
-            print np.amin(max_peaks[:,value])
-            return np.amin(max_peaks[:,value]) - minimum[value]
+            self.trap_depth = np.amin(max_peaks[:,value]) - self.minimum[value]
         else:
-            return 0
+            self.trap_depth = 0
+        return self.trap_depth
     def getMaximumE(self):
-        return np.amax(self.data[:,value])
+        self.max_e = np.amax(self.data[:,value])
+        return self.max_e
     def getTrapRatio(self):
-        return self.getTrapDepth()/self.getMaximumE()
+        if (self.trap_depth == None):
+            self.getTrapDepth()
+        if (self.max_e == None):
+            self.getMaximumE()
+        return self.trap_depth/self.max_e
 
 class Eccentricity:
     def __init__(self, analysis, limits):
@@ -177,17 +194,11 @@ class Export:
             elif (foo == "TrapRatio_"):
                 line += (str(self.data_files[i].getTrapRatio())+"\n")
             elif (foo == "Zmin_"):
-                try:
-                    minimum = self.data_files[i].getCentralMinimum()
-                except Exception as e:
-                    minimum = [0,0,0,0]
-                print minimum
+                minimum = self.data_files[i].getCentralMinimum()
                 line += (str(minimum[z])+"\n")
             elif (foo == "Emin_"):
-                try:
-                    line += (str(self.data_files[i].getCentralMinimum()[value])+"\n")
-                except Exception as e:
-                    line += "0\n"
+                minimum = self.data_files[i].getCentralMinimum()
+                line += (str(minimum[value])+"\n")
             elif (foo == "Eccentricity_"):
                 try:
                     E = Eccentricity(self.data_files[i],(50,70))
@@ -209,31 +220,31 @@ def main():
     parser.add_argument('-r', dest='regex', action='store', help='file regex')
     args = parser.parse_args()
     E = Export(args.regex)
-    # print "Analysing position of minimum..."
-    # E.parameter("Zmin_")
-    # print "Analysing value of minimum..."
-    # E.parameter("Emin_")
-    # print "Analysing depth of trap..."
-    # E.parameter("Depth_")
-    # print "Analysing maximum E field..."
-    # E.parameter("Emax_")
-    # print "Analysing trap ratio..."
-    # E.parameter("TrapRatio_")
-    # print "Analysing eccentricity..."
-    # E.parameter("Eccentricity_")
-    # print "Removing duplicate entries..."
-    # removeDuplicates()
-    # print "Done."
-    for i in E.data_files:
-        line = i.getCentralZCut()
-        try:
-            i.getCentralMinimum()
-            x = (i.getTrapDepth(), i.getTrapRatio())
-            print x
-            plt.scatter(line[:,z],line[:,value])
-            plt.show()
-        except:
-            pass
+    print "Analysing position of minimum..."
+    E.parameter("Zmin_")
+    print "Analysing value of minimum..."
+    E.parameter("Emin_")
+    print "Analysing depth of trap..."
+    E.parameter("Depth_")
+    print "Analysing maximum E field..."
+    E.parameter("Emax_")
+    print "Analysing trap ratio..."
+    E.parameter("TrapRatio_")
+    print "Analysing eccentricity..."
+    E.parameter("Eccentricity_")
+    print "Removing duplicate entries..."
+    removeDuplicates()
+    print "Done."
+    # for i in E.data_files:
+    #     line = i.getCentralZCut()
+    #     try:
+    #         i.getCentralMinimum()
+    #         x = (i.getTrapDepth(), i.getTrapRatio())
+    #         print x
+    #         plt.scatter(line[:,z],line[:,value])
+    #         plt.show()
+    #     except:
+    #         pass
 
 if (__name__ == '__main__'):
     main()

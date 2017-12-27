@@ -22,12 +22,18 @@ def convertFile(inputfile):
 def concatinateFiles(inputfile):
     full_file = open(inputfile, "a")
     parameter = ("_").join(inputfile.split("_")[1:])
-    for line in open("gridsurface_" + parameter):
-        full_file.write(line)
-    os.remove("gridsurface_" + parameter)
-    for line in open("gridline_" + parameter):
-        full_file.write(line)
-    os.remove("gridline_" + parameter)
+    try:
+        for line in open("gridsurface_" + parameter):
+            full_file.write(line)
+        os.remove("gridsurface_" + parameter)
+    except IOError:
+        print "gridsurface_" + parameter + " does not exist."
+    try:
+        for line in open("gridline_" + parameter):
+            full_file.write(line)
+        os.remove("gridline_" + parameter)
+    except IOError:
+        print "gridline_" + parameter + " does not exist."
     full_file.close()
 
 def main():

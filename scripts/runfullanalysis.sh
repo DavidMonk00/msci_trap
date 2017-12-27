@@ -1,6 +1,6 @@
 #!/bin/bash
 P=~/COMSOL/Data/Parameters/scripts
-$P/preprocess.sh
+python $P/win_field_converter.py
 python $P/analysis.py -r './grid*.csv'
 mkdir ./Analysed
 mv grid_*.csv ./Analysed/
