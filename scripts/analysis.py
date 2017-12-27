@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from glob import glob
 from scipy import signal
+import pandas as pd
 import tools
 import argparse
 import thread
@@ -11,9 +12,53 @@ y = 1
 z = 2
 value = 3
 
+def savitzky_golay(y, window_size, order, deriv=0, rate=1):
+    r"""Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
+    The Savitzky-Golay filter removes high frequency noise from data.
+    It has the advantage of preserving the original shape and
+    features of the signal better than other types of filtering
+    approaches, such as moving averages techniques.
+    Parameters
+    ----------
+    y : array_like, shape (N,)
+        the values of the time history of the signal.
+    window_size : int
+        the length of the window. Must be an odd integer number.
+    order : int
+        the order of the polynomial used in the filtering.
+        Must be less then `window_size` - 1.
+    deriv: int
+        the order of the derivative to compute (default = 0 means only smoothing)
+    Returns
+    -------
+    ys : ndarray, shape (N)
+        the smoothed signal (or it's n-th derivative).
+    """
+    from math import factorial
+    try:
+        window_size = np.abs(np.int(window_size))
+        order = np.abs(np.int(order))
+    except ValueError, msg:
+        raise ValueError("window_size and order have to be of type int")
+    if window_size % 2 != 1 or window_size < 1:
+        raise TypeError("window_size size must be a positive odd number")
+    if window_size < order + 2:
+        raise TypeError("window_size is too small for the polynomials order")
+    order_range = range(order+1)
+    half_window = (window_size -1) // 2
+    # precompute coefficients
+    b = np.mat([[k**i for i in order_range] for k in range(-half_window, half_window+1)])
+    m = np.linalg.pinv(b).A[deriv] * rate**deriv * factorial(deriv)
+    # pad the signal at the extremes with
+    # values taken from the signal itself
+    firstvals = y[0] - np.abs( y[1:half_window+1][::-1] - y[0] )
+    lastvals = y[-1] + np.abs(y[-half_window-1:-1][::-1] - y[-1])
+    y = np.concatenate((firstvals, y, lastvals))
+    return np.convolve( m[::-1], y, mode='valid')
+
 class Data:
     def __init__(self, filename):
-        self.data = np.loadtxt(filename,delimiter=",")
+        self.data = pd.read_csv(filename,delimiter=",").values
     def __getitem__(self, item):
         return self.data[item]
     def getData(self):
@@ -27,6 +72,7 @@ class Analysis:
         self.data = Data(filename)
     def getCentralZCut(self):
         line = np.array([i for i in self.data if (i[x] == 0 and i[y] == 0)])
+        line[:,value] = savitzky_golay(line[:,value],11,4)
         return line
     def getCentralMinimum(self):
         line = self.getCentralZCut()
@@ -45,6 +91,7 @@ class Analysis:
         max_index = signal.argrelextrema(line[:,value],np.greater)[0]
         try:
             minimum = self.getCentralMinimum()
+            print minimum[value]
         except Exception as e:
             return 0
         if (len(max_index) > 0):
@@ -53,6 +100,7 @@ class Analysis:
                 i += 1
             max_peaks = np.append(line[np.where(line[:,value] == np.amax(line[max_index][:,value]))[0]][0],line[i]) #Can only be one maximum due to maxwell's equations
             max_peaks = max_peaks.reshape(len(max_peaks)/4,4)
+            print np.amin(max_peaks[:,value])
             return np.amin(max_peaks[:,value]) - minimum[value]
         else:
             return 0
@@ -107,7 +155,7 @@ class Export:
         print "Loading files..."
         for filename in self.files:
             print filename
-            self.data_files.append(Analysis(np.loadtxt(filename,delimiter=",")))
+            self.data_files.append(Analysis(pd.read_csv(filename,delimiter=",").values))
     def parameter(self,filename):
         param_file = self.files[0][:tools.getDotsInString(self.files[0])[-1]]
         parameters = param_file.split("_")[1:]
@@ -152,7 +200,7 @@ class Export:
 
 def removeDuplicates():
     for f in glob("*.analysis"):
-        data = np.loadtxt(f,delimiter=",")
+        data = pd.read_csv(f,delimiter=",").values
         arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
         np.savetxt(f, data[unique], delimiter=',')
 
@@ -161,24 +209,31 @@ def main():
     parser.add_argument('-r', dest='regex', action='store', help='file regex')
     args = parser.parse_args()
     E = Export(args.regex)
-    print "Analysing position of minimum..."
-    E.parameter("Zmin_")
-    print "Analysing value of minimum..."
-    E.parameter("Emin_")
-    print "Analysing depth of trap..."
-    E.parameter("Depth_")
-    print "Analysing maximum E field..."
-    E.parameter("Emax_")
-    print "Analysing trap ratio..."
-    E.parameter("TrapRatio_")
-    print "Analysing eccentricity..."
-    E.parameter("Eccentricity_")
-    print "Removing duplicate entries..."
-    removeDuplicates()
-    print "Done."
-    # line = E.data_files[0].getCentralZCut()
-    # plt.scatter(line[:,z],line[:,value])
-    # plt.show()
+    # print "Analysing position of minimum..."
+    # E.parameter("Zmin_")
+    # print "Analysing value of minimum..."
+    # E.parameter("Emin_")
+    # print "Analysing depth of trap..."
+    # E.parameter("Depth_")
+    # print "Analysing maximum E field..."
+    # E.parameter("Emax_")
+    # print "Analysing trap ratio..."
+    # E.parameter("TrapRatio_")
+    # print "Analysing eccentricity..."
+    # E.parameter("Eccentricity_")
+    # print "Removing duplicate entries..."
+    # removeDuplicates()
+    # print "Done."
+    for i in E.data_files:
+        line = i.getCentralZCut()
+        try:
+            i.getCentralMinimum()
+            x = (i.getTrapDepth(), i.getTrapRatio())
+            print x
+            plt.scatter(line[:,z],line[:,value])
+            plt.show()
+        except:
+            pass
 
 if (__name__ == '__main__'):
     main()
