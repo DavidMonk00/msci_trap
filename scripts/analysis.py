@@ -131,6 +131,7 @@ class Eccentricity:
         self.analysis = analysis
         self.xy = self.analysis.getXYAtMinimumZ()
         self.mask_limits = limits
+        self.eccentricity = None
     def plotXY(self,plane):
         x = np.unique(plane[:,0])
         y = np.unique(plane[:,1])
@@ -141,7 +142,7 @@ class Eccentricity:
         plt.show()
     def plotScatter(self,contour):
         plt.scatter(contour[:,0],contour[:,1])
-        plt.show()
+        #plt.show()
     def maskPlane(self,xmax,ymax):
         plane = self.xy[np.where(np.abs(self.xy[:,0])<ymax)]
         return plane[np.where(np.abs(plane[:,1])<xmax)]
@@ -163,7 +164,8 @@ class Eccentricity:
         masked = self.maskPlane(self.mask_limits[0], self.mask_limits[1])
         contour = self.getContour(masked,max_e*self.getMinimum(masked)[3],error)
         axes = self.getAxes(contour)
-        return np.linalg.norm(axes[0])/np.linalg.norm(axes[1])
+        self.eccentricity = np.linalg.norm(axes[0])/np.linalg.norm(axes[1])
+        return self.eccentricity
 
 class Export:
     def __init__(self,parameter):
@@ -201,11 +203,23 @@ class Export:
                 line += (str(minimum[value])+"\n")
             elif (foo == "Eccentricity_"):
                 try:
-                    E = Eccentricity(self.data_files[i],(50,70))
-                    e = E.calculate(1.2, 0.02)
+                    E = Eccentricity(self.data_files[i],(100,150))
+                    e = E.calculate(1.05, 0.02)
                 except Exception as e:
                     e = 0
                 line += (str(e)+"\n")
+            elif (foo == "Quality_"):
+                ratio = self.data_files[i].getTrapRatio()
+                try:
+                    E = Eccentricity(self.data_files[i],(100,150))
+                    e = E.calculate(1.05, 0.02)
+                except Exception as e:
+                    e = 0
+                try:
+                    quality = float(e)/float(ratio)
+                except ZeroDivisionError:
+                    quality = 0
+                line += (str(quality)+"\n")
             f.write(line)
         f.close()
 
@@ -232,6 +246,8 @@ def main():
     E.parameter("TrapRatio_")
     print "Analysing eccentricity..."
     E.parameter("Eccentricity_")
+    print "Analysing trap quality..."
+    E.parameter("Quality_")
     print "Removing duplicate entries..."
     removeDuplicates()
     print "Done."
