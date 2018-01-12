@@ -4,7 +4,7 @@ import os
 
 def convertFile(inputfile):
     filename = ('.').join(inputfile.split('.')[:-1])
-    csvfile = open(filename+".csv", 'w')
+    csvfile = open(filename+".csv", 'wb')
     fieldwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
     for line in open(inputfile):
         line = line.strip()
@@ -44,8 +44,8 @@ def main():
     for i in glob("grid_*.csv"):
         concatinateFiles(i)
     print "Removing original text files..."
-    for i in glob("*.txt"):
-        os.remove(i)
+    # for i in glob("*.txt"):
+    #     os.remove(i)
     print "Done."
 
 if (__name__ == "__main__"):

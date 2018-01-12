@@ -170,6 +170,7 @@ class Eccentricity:
 class Export:
     def __init__(self,parameter):
         self.files = glob(parameter)
+        self.e = 0
     def parameter(self,filename):
         param_file = self.files[0][:tools.getDotsInString(self.files[0])[-1]]
         parameters = param_file.split("_")[1:]
@@ -196,19 +197,19 @@ class Export:
             minimum = self.data_file.getCentralMinimum()
             line += (str(minimum[value])+"\n")
         elif (foo == "Eccentricity_"):
-            try:
-                E = Eccentricity(self.data_file,(100,150))
-                e = E.calculate(1.05, 0.02)
-            except Exception as e:
-                e = 0
+            E = Eccentricity(self.data_file,(100,150))
+            e_arr = [E.calculate(i,0.02) for i in np.arange(1.06,1.2,0.001)]
+            e = np.mean(e_arr)
+            self.e = e
             line += (str(e)+"\n")
         elif (foo == "Quality_"):
             ratio = self.data_file.getTrapRatio()
-            try:
+            if (self.e == 0):
                 E = Eccentricity(self.data_file,(100,150))
-                e = E.calculate(1.05, 0.02)
-            except Exception as e:
-                e = 0
+                e_arr = [E.calculate(i,0.02) for i in np.arange(1.06,1.2,0.001)]
+                e = np.mean(e_arr)
+            else:
+                e = self.e
             try:
                 quality = float(e)/float(ratio)
             except ZeroDivisionError:
@@ -216,6 +217,7 @@ class Export:
             line += (str(quality)+"\n")
         f.write(line)
         f.close()
+
     def analyse(self):
         for filename in self.files:
             self.filename = filename
@@ -235,7 +237,6 @@ class Export:
             self.parameter("Eccentricity_")
             print "Analysing trap quality..."
             self.parameter("Quality_")
-
 
 def removeDuplicates():
     for f in glob("*.analysis"):
