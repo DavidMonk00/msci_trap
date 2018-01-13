@@ -156,7 +156,9 @@ class Eccentricity:
         angles = []
         a_norm = a/np.linalg.norm(a)
         for i in contour[:,:2]:
-            angles.append(np.dot(a_norm,i/np.linalg.norm(i)))
+            i_abs = np.linalg.norm(i)
+            if (i_abs != 0):
+                angles.append(np.dot(a_norm,i/i_abs))
         angles = np.abs(np.array(angles))
         b = contour[np.where(np.abs(angles == np.amin(angles)))][0][:2]
         return (a,b)
@@ -185,6 +187,7 @@ class Export:
         for j in range(1,len(parameters),2):
             line += (parameters[j] + ",")
         if (foo == "Depth_"):
+            print self.data_file.getTrapDepth()
             line += (str(self.data_file.getTrapDepth())+"\n")
         elif (foo == "Emax_"):
             line += (str(self.data_file.getMaximumE())+"\n")
@@ -198,15 +201,15 @@ class Export:
             line += (str(minimum[value])+"\n")
         elif (foo == "Eccentricity_"):
             E = Eccentricity(self.data_file,(100,150))
-            e_arr = [E.calculate(i,0.02) for i in np.arange(1.06,1.2,0.001)]
+            e_arr = [E.calculate(i, 0.02) for i in np.arange(1.06,1.2,0.001)]
             e = np.mean(e_arr)
-            self.e = e
             line += (str(e)+"\n")
+            self.e = e
         elif (foo == "Quality_"):
             ratio = self.data_file.getTrapRatio()
             if (self.e == 0):
                 E = Eccentricity(self.data_file,(100,150))
-                e_arr = [E.calculate(i,0.02) for i in np.arange(1.06,1.2,0.001)]
+                e_arr = [E.calculate(i, 0.02) for i in np.arange(1.06,1.2,0.001)]
                 e = np.mean(e_arr)
             else:
                 e = self.e
@@ -217,7 +220,6 @@ class Export:
             line += (str(quality)+"\n")
         f.write(line)
         f.close()
-
     def analyse(self):
         for filename in self.files:
             self.filename = filename
@@ -238,10 +240,11 @@ class Export:
             print "Analysing trap quality..."
             self.parameter("Quality_")
 
+
 def removeDuplicates():
     for f in glob("*.analysis"):
         data = pd.read_csv(f,delimiter=",").values
-        arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
+        arr, unique = np.unique(data[:,:-1],axis = 0,return_index=True)
         np.savetxt(f, data[unique], delimiter=',')
 
 def main():
