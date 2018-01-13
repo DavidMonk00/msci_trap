@@ -96,7 +96,7 @@ class Analysis:
         if (self.minimum.any() == False):
             raise "No minimum."
         else:
-            z_value = 4*(int(self.minimum[z])/4)
+            z_value = 2*(int(self.minimum[z])/2)
             self.xy = np.array([i for i in self.data if i[z] == z_value])
             return self.xy
     def getTrapDepth(self):
@@ -142,7 +142,7 @@ class Eccentricity:
         plt.show()
     def plotScatter(self,contour):
         plt.scatter(contour[:,0],contour[:,1])
-        #plt.show()
+        plt.show()
     def maskPlane(self,xmax,ymax):
         plane = self.xy[np.where(np.abs(self.xy[:,0])<ymax)]
         return plane[np.where(np.abs(plane[:,1])<xmax)]
@@ -204,7 +204,7 @@ class Export:
             elif (foo == "Eccentricity_"):
                 try:
                     E = Eccentricity(self.data_files[i],(100,150))
-                    e = E.calculate(1.05, 0.02)
+                    e = np.mean([E.calculate(i, 0.02) for i in np.arange(1.005,1.1,0.005)])
                 except Exception as e:
                     e = 0
                 line += (str(e)+"\n")
@@ -212,7 +212,8 @@ class Export:
                 ratio = self.data_files[i].getTrapRatio()
                 try:
                     E = Eccentricity(self.data_files[i],(100,150))
-                    e = E.calculate(1.05, 0.02)
+                    e = np.mean([E.calculate(i, 0.02) for i in np.arange(1.005,1.1,0.005)])
+					print e
                 except Exception as e:
                     e = 0
                 try:
@@ -226,7 +227,7 @@ class Export:
 def removeDuplicates():
     for f in glob("*.analysis"):
         data = pd.read_csv(f,delimiter=",").values
-        arr, unique = np.unique(data[:,:3],axis = 0,return_index=True)
+        arr, unique = np.unique(data[:,:-1],axis = 0,return_index=True)
         np.savetxt(f, data[unique], delimiter=',')
 
 def main():
