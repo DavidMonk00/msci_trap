@@ -79,7 +79,6 @@ class Analysis:
         line = np.array([i for i in self.data if (i[x] == 0 and i[y] == 0)])
         line[:,value] = savitzky_golay(line[:,value],11,4)
         self.zcut = line
-        print self.zcut
         return self.zcut
     def getCentralMinimum(self):
         if (len(self.zcut) == 0):
@@ -90,7 +89,6 @@ class Analysis:
         min_index = signal.argrelextrema(self.zcut[:,value],np.less)[0]
         if (len(min_index) > 0):
             self.minimum = self.zcut[np.where(self.zcut[:,value] == np.amin(self.zcut[min_index][:,value]))[0]][0]
-        print self.minimum
         return self.minimum
     def getXYAtMinimumZ(self):
         if (self.minimum.any() == False):

@@ -4,7 +4,6 @@ import os
 
 def convertFile(inputfile):
     filename = ('.').join(inputfile.split('.')[:-1])
-    print filename
     csvfile = open(filename+".csv", 'wb')
     fieldwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
     for line in open(inputfile):

@@ -1,0 +1,1067 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     43582,       1059]
+NotebookOptionsPosition[     42425,       1032]
+NotebookOutlinePosition[     42764,       1047]
+CellTagsIndexPosition[     42721,       1044]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"NotebookDirectory", "[", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.718956979414365*^9, 
+  3.718957000587905*^9}},ExpressionUUID->"fac211aa-b870-4cf3-b23f-\
+a0a655ec18b0"],
+
+Cell[BoxData["\<\"/home/david/COMSOL/Data/Parameters\"\>"], "Output",
+ CellChangeTimes->{3.719044310377226*^9, 3.7190459690798264`*^9, 
+  3.7190519385581927`*^9, 3.719052100358926*^9, 3.7190575579826784`*^9, 
+  3.7190576900522785`*^9, 3.7190582464729223`*^9, 
+  3.719081533112912*^9},ExpressionUUID->"d5501d8e-25af-4f4c-8323-\
+193c00573c9c"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.718956985577414*^9, 
+  3.718956986669201*^9}},ExpressionUUID->"b5cee4d5-3e4b-4203-80a1-\
+da77f35f3352"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SetOptions", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "Histogram", ",", "ListPlot", ",", "ListLinePlot", ",", "Plot", ",", 
+      "Plot"}], "}"}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Helvetica\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "10"}]}], "}"}]}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+    RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+    RowBox[{"Axes", "\[Rule]", "False"}]}], "]"}], ";"}]], "Input",ExpressionU\
+UID->"eaad3f71-bbd7-499b-8bd4-05484dfb027f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetFullData", "[", "file_", "]"}], ":=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"file", ",", "\"\<Table\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetHeader", "[", "data_", "]"}], ":=", 
+   RowBox[{"data", "\[LeftDoubleBracket]", 
+    RowBox[{"1", ";;", "9"}], "\[RightDoubleBracket]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetData", "[", "data_", "]"}], ":=", 
+   RowBox[{"data", "\[LeftDoubleBracket]", 
+    RowBox[{"10", ";;", 
+     RowBox[{"-", "1"}]}], "\[RightDoubleBracket]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GetPlaneCut", "[", 
+   RowBox[{"data_", ",", "dim_", ",", " ", "values_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"datatemp", ",", "data1", ",", "data2"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"datatemp", " ", "=", " ", 
+      RowBox[{"Round", "[", 
+       RowBox[{"data", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "2", ",", "3"}], "}"}]}], 
+        "\[RightDoubleBracket]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"data1", " ", "=", " ", 
+      RowBox[{"Partition", "[", 
+       RowBox[{
+        RowBox[{"Flatten", "[", 
+         RowBox[{"Transpose", "[", 
+          RowBox[{"{", 
+           RowBox[{"datatemp", ",", 
+            RowBox[{"data", "\[LeftDoubleBracket]", 
+             RowBox[{"All", ",", "4"}], "\[RightDoubleBracket]"}]}], "}"}], 
+          "]"}], "]"}], ",", "4"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Switch", "[", 
+      RowBox[{"dim", ",", "\[IndentingNewLine]", "\"\<xy\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{"_", ",", "_", ",", "values", ",", "_"}], "}"}]}], "]"}], 
+         "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2", ",", "4"}], "}"}]}], 
+         "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+       "\"\<yz\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{"values", ",", "_", ",", "_", ",", "_"}], "}"}]}], "]"}], 
+         "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"2", ",", "3", ",", "4"}], "}"}]}], 
+         "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+       "\"\<xz\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{"_", ",", "values", ",", "_", ",", "_"}], "}"}]}], "]"}], 
+         "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "3", ",", "4"}], "}"}]}], 
+         "\[RightDoubleBracket]"}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+     "\[IndentingNewLine]", "data2"}]}], "\[IndentingNewLine]", 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GetLineCut", "[", 
+   RowBox[{"data_", ",", "dim_", ",", " ", "values_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"datatemp", ",", "data1", ",", "data2"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"datatemp", " ", "=", " ", 
+      RowBox[{"Round", "[", 
+       RowBox[{"data", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "2", ",", "3"}], "}"}]}], 
+        "\[RightDoubleBracket]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"data1", " ", "=", " ", 
+      RowBox[{"Partition", "[", 
+       RowBox[{
+        RowBox[{"Flatten", "[", 
+         RowBox[{"Transpose", "[", 
+          RowBox[{"{", 
+           RowBox[{"datatemp", ",", 
+            RowBox[{"data", "\[LeftDoubleBracket]", 
+             RowBox[{"All", ",", "4"}], "\[RightDoubleBracket]"}]}], "}"}], 
+          "]"}], "]"}], ",", "4"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Switch", "[", 
+      RowBox[{"dim", ",", "\[IndentingNewLine]", "\"\<x\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{"_", ",", 
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+              ",", 
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}],
+              ",", "_"}], "}"}]}], "]"}], "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "4"}], "}"}]}], "\[RightDoubleBracket]"}]}], ",",
+        "\[IndentingNewLine]", "\"\<y\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+              ",", "_", ",", 
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}],
+              ",", "_"}], "}"}]}], "]"}], "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"2", ",", "4"}], "}"}]}], "\[RightDoubleBracket]"}]}], ",",
+        "\[IndentingNewLine]", "\"\<z\>\"", ",", 
+       RowBox[{"data2", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"Cases", "[", 
+          RowBox[{"data1", ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+              ",", 
+             RowBox[{
+             "values", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}],
+              ",", "_", ",", "_"}], "}"}]}], "]"}], "\[LeftDoubleBracket]", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"3", ",", "4"}], "}"}]}], "\[RightDoubleBracket]"}]}]}], 
+      "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", "data2"}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"GetMinimum", "[", "data_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"linecut", ",", "zindex"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"linecut", " ", "=", " ", 
+      RowBox[{"GetLineCut", "[", 
+       RowBox[{"data", ",", "\"\<z\>\"", ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0"}], "}"}]}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"zindex", " ", "=", " ", 
+      RowBox[{
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"linecut", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{"Min", "[", 
+          RowBox[{"linecut", "\[LeftDoubleBracket]", 
+           RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+        "]"}], "\[LeftDoubleBracket]", 
+       RowBox[{"1", ",", "1"}], "\[RightDoubleBracket]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+      "linecut", "\[LeftDoubleBracket]", "zindex", "\[RightDoubleBracket]"}], 
+      "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"PlotPlane", "[", "data_", "]"}], ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"minimum", ",", " ", "plane"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"minimum", " ", "=", " ", 
+      RowBox[{"GetMinimum", "[", "data", "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"plane", " ", "=", " ", 
+      RowBox[{"GetPlaneCut", "[", 
+       RowBox[{"data", ",", "\"\<xy\>\"", ",", "minimum"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"ListDensityPlot", "[", 
+      RowBox[{"plane", ",", 
+       RowBox[{"ColorFunction", "\[Rule]", "\"\<Rainbow\>\""}], ",", 
+       RowBox[{"PlotLegends", "\[Rule]", "Automatic"}]}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Plot3Axis", "[", "data_", "]"}], ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", "minimum", "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"minimum", " ", "=", " ", 
+      RowBox[{"GetMinimum", "[", "data", "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"ListLinePlot", "[", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"GetLineCut", "[", 
+         RowBox[{"data", ",", "\"\<x\>\"", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "minimum"}], "}"}]}], "]"}], ",", 
+        RowBox[{"GetLineCut", "[", 
+         RowBox[{"data", ",", "\"\<y\>\"", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "minimum"}], "}"}]}], "]"}], ",", 
+        RowBox[{"GetLineCut", "[", 
+         RowBox[{"data", ",", "\"\<z\>\"", ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}]}], "]"}]}], "}"}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ParabolaFit", "[", "data_", "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"PFit", ",", "S0Guess", ",", "x0Guess", ",", "S1Guess"}], "}"}], 
+    ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"S1Guess", "=", 
+      RowBox[{"Min", "[", 
+       RowBox[{"data", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"x0Guess", "=", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"data", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "1"}], "\[RightDoubleBracket]"}], 
+         "\[LeftDoubleBracket]", 
+         RowBox[{"Ordering", "[", 
+          RowBox[{
+           RowBox[{"data", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", "1"}], 
+          "]"}], "\[RightDoubleBracket]"}], ")"}], "\[LeftDoubleBracket]", 
+       "1", "\[RightDoubleBracket]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"S0Guess", "=", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Max", "[", 
+           RowBox[{"data", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "-", 
+          
+          RowBox[{"Min", "[", 
+           RowBox[{"data", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+         ")"}], 
+        RowBox[{"1", "/", "2"}]], "  ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Max", "[", 
+          RowBox[{"data", "\[LeftDoubleBracket]", 
+           RowBox[{"All", ",", "1"}], "\[RightDoubleBracket]"}], "]"}], "-", 
+         RowBox[{"Min", "[", 
+          RowBox[{"data", "\[LeftDoubleBracket]", 
+           RowBox[{"All", ",", "1"}], "\[RightDoubleBracket]"}], "]"}]}], 
+        ")"}]}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"PFit", "=", 
+      RowBox[{"NonlinearModelFit", "[", 
+       RowBox[{"data", ",", 
+        RowBox[{
+         RowBox[{"S0", " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{"x", "-", "x0"}], ")"}], "2"]}], "+", "S1"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"S0", ",", "S0Guess"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"x0", ",", "x0Guess"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"S1", ",", "S1Guess"}], "}"}]}], "}"}], ",", "x"}], 
+       "]"}]}]}]}], "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"PlotFit", "[", "data_", "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", "FitP", "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"FitP", "=", 
+      RowBox[{"ParabolaFit", "[", "data", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Show", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"ListPlot", "[", "data", "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Plot", "[", 
+        RowBox[{
+         RowBox[{"FitP", "[", "x", "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"x", ",", 
+           RowBox[{"Min", "[", 
+            RowBox[{"data", "\[LeftDoubleBracket]", 
+             RowBox[{"All", ",", "1"}], "\[RightDoubleBracket]"}], "]"}], ",", 
+           RowBox[{"Max", "[", 
+            RowBox[{"data", "\[LeftDoubleBracket]", 
+             RowBox[{"All", ",", "1"}], "\[RightDoubleBracket]"}], "]"}]}], 
+          "}"}]}], "]"}], ",", 
+       RowBox[{"FrameLabel", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<position / \[Mu]m\>\"", ",", "\"\<|E| / (V/m)\>\""}], 
+         "}"}]}]}], "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+   "]"}]}]}], "Input",
+ CellChangeTimes->{
+  3.7189570378092012`*^9, {3.718964846233348*^9, 3.718965062306519*^9}, {
+   3.718965092756345*^9, 3.718965093824668*^9}, {3.7189651981181917`*^9, 
+   3.7189653227852907`*^9}, {3.719041392295149*^9, 3.719041522857445*^9}, {
+   3.719041553893714*^9, 3.719041576064657*^9}, {3.719041725373662*^9, 
+   3.7190417284445667`*^9}, 3.719041774519698*^9, {3.719041817937715*^9, 
+   3.719041871329468*^9}, {3.719041930322627*^9, 3.719041958068701*^9}, {
+   3.719041995082485*^9, 3.719042049340734*^9}, {3.7190420907811623`*^9, 
+   3.719042134738648*^9}, {3.719042169056847*^9, 3.719042203161357*^9}, {
+   3.719042315749833*^9, 3.7190423169229116`*^9}, {3.7190424979903183`*^9, 
+   3.719042631409638*^9}, {3.7190427614906473`*^9, 3.719042862466107*^9}, {
+   3.719042910489551*^9, 3.719042987124724*^9}, {3.7190438644975815`*^9, 
+   3.7190439064301124`*^9}, {3.719043960577426*^9, 3.719044050729826*^9}, {
+   3.7190440896830263`*^9, 3.719044091835826*^9}, {3.7190441725814257`*^9, 
+   3.7190441812394257`*^9}, 3.719044235215426*^9, {3.7190445186008263`*^9, 
+   3.719044519111826*^9}, {3.719044983822826*^9, 3.719045004550826*^9}, {
+   3.719045228606826*^9, 3.7190454591748257`*^9}, {3.719045515408826*^9, 
+   3.719045594335826*^9}, {3.719045645702826*^9, 3.7190456497668257`*^9}, {
+   3.7190572777734785`*^9, 3.7190572818606787`*^9}, {3.7190573390970783`*^9, 
+   3.7190573412030783`*^9}, {3.7190577270086784`*^9, 
+   3.7190579385132966`*^9}, {3.7190580104132357`*^9, 
+   3.7190581673014297`*^9}},ExpressionUUID->"eed616b5-0562-4cde-8273-\
+86670b15f4c0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"F", "=", 
+  RowBox[{
+  "FileNames", "[", "\"\<*xterm*.txt\>\"", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Data0", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GetFullData", "[", "#", "]"}], "&"}], "/@", "F"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"H0", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GetHeader", "[", "#", "]"}], "&"}], "/@", "Data0"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Data1", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GetData", "[", "#", "]"}], "&"}], "/@", "Data0"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.718964812826356*^9, 3.718964812828223*^9}, 
+   3.719041603007442*^9, {3.719043133621529*^9, 3.719043146510057*^9}, {
+   3.7190437895068617`*^9, 3.7190437976656094`*^9}, {3.7190459416858263`*^9, 
+   3.719045942044826*^9}, {3.7190468312778263`*^9, 3.719046831789826*^9}, {
+   3.7190520905309887`*^9, 3.719052095600956*^9}, {3.719056021975483*^9, 
+   3.719056025173503*^9}, {3.719081514735725*^9, 3.719081522266923*^9}, 
+   3.719125099200819*^9},ExpressionUUID->"fb762f3e-3ec9-4b2d-a4d3-\
+72d302b81cac"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"grid_xterm_0_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_0_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_100_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_10_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_20_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_30_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_40_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_50_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_60_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_70_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_80_yterm_90.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_0.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_100.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_10.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_110.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_120.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_130.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_140.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_150.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_160.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_170.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_180.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_190.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_200.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_20.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_30.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_40.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_50.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_60.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_70.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_80.txt\"\>", 
+   ",", "\<\"grid_xterm_90_yterm_90.txt\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.719044310548826*^9, {3.719045942999826*^9, 3.719045969158826*^9}, 
+   3.719046832886826*^9, 3.7190519387297897`*^9, 3.7190521004837246`*^9, 
+   3.719056026421511*^9, 3.7190575581230783`*^9, 3.7190576901926785`*^9, 
+   3.7190582465665216`*^9, {3.719081523867599*^9, 3.719081533282518*^9}, 
+   3.719125100713052*^9},ExpressionUUID->"524fa454-014c-4a96-8f6e-\
+492d3cd87b93"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"DataT", " ", "=", " ", "Data1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"GetMinimum", "[", 
+  RowBox[{"Data1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PlotPlane", "[", "#", "]"}], "&"}], "/@", 
+  "DataT"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Plot3Axis", "[", "#", "]"}], "&"}], "/@", "DataT"}]}], "Input",
+ CellChangeTimes->{
+  3.719044222345426*^9, {3.7190443799698257`*^9, 3.7190445077198257`*^9}, {
+   3.719044583102826*^9, 3.7190445938698263`*^9}, {3.719044663206826*^9, 
+   3.719044669247826*^9}, {3.719044709214826*^9, 3.7190447161528263`*^9}, {
+   3.719045855421826*^9, 3.719045865229826*^9}, {3.7190465415028257`*^9, 
+   3.719046554396826*^9}, {3.7190526259903245`*^9, 3.7190526934055243`*^9}, {
+   3.719057375023878*^9, 3.7190574596850786`*^9}, {3.719057491665078*^9, 
+   3.7190575133978786`*^9}, {3.719057585688278*^9, 3.7190576380574784`*^9}, {
+   3.719057974642665*^9, 3.719057986732588*^9}, {3.7190581754757776`*^9, 
+   3.7190582163163157`*^9}, {3.719058344268696*^9, 3.7190583820204535`*^9}, 
+   3.719171097705361*^9},ExpressionUUID->"9de631e6-66de-44af-af50-\
+4d53950dcdb9"],
+
+Cell[BoxData[
+ InterpretationBox[
+  TagBox[
+   FrameBox[GridBox[{
+      {
+       ItemBox[
+        TagBox[
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "0", ",", "483264.28287603986`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "4", ",", "501117.1327298154`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "8", ",", "570114.636092881`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "12", ",", "664260.1696553916`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "16", ",", "756846.3156612947`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "20", ",", "834158.4456927878`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "24", ",", "902824.389612779`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "28", ",", "958811.8412810387`"}], 
+              "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "32", ",", "1.003164615241954`*^6"}],
+               "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "36", ",", 
+               "1.0377071652050704`*^6"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "20"}], ",", 
+               RowBox[{"-", "20"}], ",", "40", ",", 
+               "1.0635727208692941`*^6"}], "}"}], ",", 
+             TemplateBox[{"51354"},
+              "OutputSizeLimit`Skeleton"], ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "260", ",", "564303.6426765752`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "263.99999999999994`", ",", 
+               "562098.3296395962`"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "268", ",", "560133.7812725982`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "272", ",", "558406.7099275116`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "276", ",", "556913.4717637745`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "280", ",", "555655.7854684031`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "283.99999999999994`", ",", 
+               "554626.6574972083`"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "288", ",", "553826.2707144114`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{"80", ",", "80", ",", "292", ",", "553255.342583863`"}],
+               "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "296", ",", "552911.2230017324`"}], "}"}],
+              ",", 
+             RowBox[{"{", 
+              RowBox[{
+              "80", ",", "80", ",", "300", ",", "552797.0350544631`"}], 
+              "}"}]}], "}"}], ",", 
+           TemplateBox[{"225"},
+            "OutputSizeLimit`Skeleton"], ",", 
+           RowBox[{"{", 
+            TemplateBox[{"1"},
+             "OutputSizeLimit`Skeleton"], "}"}]}], "}"}],
+         Short[#, 5]& ],
+        BaseStyle->{Deployed -> False},
+        StripOnInput->False]},
+      {GridBox[{
+         {
+          TagBox[
+           TooltipBox[
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource[
+                "FEStrings", "sizeBriefExplanation"], StandardForm],
+               ImageSizeCache->{68., {2., 8.}}],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLText",
+             StripOnInput->False],
+            StyleBox[
+             DynamicBox[
+              ToBoxes[
+               FEPrivate`FrontEndResource["FEStrings", "sizeExplanation"], 
+               StandardForm]], DynamicUpdating -> True, StripOnInput -> 
+             False]],
+           Annotation[#, 
+            Style[
+             Dynamic[
+              FEPrivate`FrontEndResource["FEStrings", "sizeExplanation"]], 
+             DynamicUpdating -> True], "Tooltip"]& ], 
+          ButtonBox[
+           PaneSelectorBox[{False->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowLess"], 
+                StandardForm],
+               ImageSizeCache->{61., {0., 8.}}],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControl",
+             StripOnInput->False], True->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowLess"], 
+                StandardForm]],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControlActive",
+             StripOnInput->False]}, Dynamic[
+             CurrentValue["MouseOver"]],
+            Alignment->Center,
+            FrameMargins->0,
+            ImageSize->{Automatic, 25}],
+           Appearance->None,
+           BaselinePosition->Baseline,
+           
+           ButtonFunction:>OutputSizeLimit`ButtonFunction[
+            OutputSizeLimit`Defer, 30, 23004222440345390162, 5/2],
+           Enabled->True,
+           Evaluator->Automatic,
+           Method->"Queued"], 
+          ButtonBox[
+           PaneSelectorBox[{False->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowMore"], 
+                StandardForm],
+               ImageSizeCache->{68., {0., 8.}}],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControl",
+             StripOnInput->False], True->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowMore"], 
+                StandardForm]],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControlActive",
+             StripOnInput->False]}, Dynamic[
+             CurrentValue["MouseOver"]],
+            Alignment->Center,
+            FrameMargins->0,
+            ImageSize->{Automatic, 25}],
+           Appearance->None,
+           BaselinePosition->Baseline,
+           
+           ButtonFunction:>OutputSizeLimit`ButtonFunction[
+            OutputSizeLimit`Defer, 30, 23004222440345390162, 5 2],
+           Enabled->True,
+           Evaluator->Automatic,
+           Method->"Queued"], 
+          ButtonBox[
+           PaneSelectorBox[{False->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowAll"], 
+                StandardForm],
+               ImageSizeCache->{51., {0., 8.}}],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControl",
+             StripOnInput->False], True->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeShowAll"], 
+                StandardForm]],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControlActive",
+             StripOnInput->False]}, Dynamic[
+             CurrentValue["MouseOver"]],
+            Alignment->Center,
+            FrameMargins->0,
+            ImageSize->{Automatic, 25}],
+           Appearance->None,
+           BaselinePosition->Baseline,
+           
+           ButtonFunction:>OutputSizeLimit`ButtonFunction[
+            OutputSizeLimit`Defer, 30, 23004222440345390162, Infinity],
+           Enabled->True,
+           Evaluator->Automatic,
+           Method->"Queued"], 
+          ButtonBox[
+           PaneSelectorBox[{False->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeChangeLimit"], 
+                StandardForm],
+               ImageSizeCache->{92., {0., 8.}}],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControl",
+             StripOnInput->False], True->
+            StyleBox[
+             StyleBox[
+              DynamicBox[ToBoxes[
+                FEPrivate`FrontEndResource["FEStrings", "sizeChangeLimit"], 
+                StandardForm]],
+              StripOnInput->False,
+              DynamicUpdating->True], "OSLControlActive",
+             StripOnInput->False]}, Dynamic[
+             CurrentValue["MouseOver"]],
+            Alignment->Center,
+            FrameMargins->0,
+            ImageSize->{Automatic, 25}],
+           Appearance->None,
+           BaselinePosition->Baseline,
+           ButtonFunction:>FrontEndExecute[{
+              FrontEnd`SetOptions[
+              FrontEnd`$FrontEnd, 
+               FrontEnd`PreferencesSettings -> {"Page" -> "Advanced"}], 
+              FrontEnd`FrontEndToken["PreferencesDialog"]}],
+           Evaluator->None,
+           Method->"Preemptive"]}
+        },
+        AutoDelete->False,
+        FrameStyle->GrayLevel[0.85],
+        GridBoxDividers->{"Columns" -> {False, {True}}},
+        GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
+        GridBoxSpacings->{"Columns" -> {{2}}}]}
+     },
+     DefaultBaseStyle->"Column",
+     GridBoxAlignment->{
+      "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+       "RowsIndexed" -> {}},
+     GridBoxDividers->{
+      "Columns" -> {{False}}, "ColumnsIndexed" -> {}, "Rows" -> {{False}}, 
+       "RowsIndexed" -> {}},
+     GridBoxItemSize->{
+      "Columns" -> {{Automatic}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+       "RowsIndexed" -> {}},
+     GridBoxSpacings->{"Columns" -> {
+         Offset[0.27999999999999997`], {
+          Offset[0.5599999999999999]}, 
+         Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+         Offset[0.2], 
+         Offset[1.2], {
+          Offset[0.4]}, 
+         Offset[0.2]}, "RowsIndexed" -> {}}],
+    BaseStyle->"OutputSizeLimit",
+    FrameMargins->{{12, 12}, {0, 15}},
+    FrameStyle->GrayLevel[0.85],
+    RoundingRadius->5,
+    StripOnInput->False],
+   Deploy,
+   DefaultBaseStyle->"Deploy"],
+  If[23004222440345390162 === $SessionID, 
+   Out[30], Message[
+     MessageName[Syntax, "noinfoker"]]; Missing["NotAvailable"]; 
+   Null]]], "Output",
+ CellChangeTimes->{{3.719044443849826*^9, 3.719044455514826*^9}, {
+   3.719044485649826*^9, 3.719044524538826*^9}, 3.7190445961528263`*^9, 
+   3.719044671889826*^9, 3.719044719512826*^9, 3.719045869319826*^9, 
+   3.719045932038826*^9, 3.719046172247826*^9, 3.7190465790948257`*^9, 
+   3.719046615754826*^9, 3.719046851230826*^9, 3.719051956326251*^9, 
+   3.719052271115431*^9, 3.7190527030307245`*^9, 3.719056043878023*^9, 
+   3.7190573914194784`*^9, {3.7190575760162783`*^9, 3.7190576111942787`*^9}, 
+   3.7190577071030784`*^9, 3.7190579885577755`*^9, 3.7190581811229415`*^9, 
+   3.7190582146003265`*^9, 3.7190582629932165`*^9, {3.7190583560154204`*^9, 
+   3.7190583846568365`*^9}, 3.719081747510129*^9, 
+   3.719125800890265*^9},ExpressionUUID->"ae76052b-dce6-45d0-a7d2-\
+f481828c6dc5"]
+}, Open  ]]
+},
+WindowSize->{1914, 1028},
+WindowMargins->{{3, Automatic}, {3, Automatic}},
+FrontEndVersion->"11.2 for Linux x86 (64-bit) (September 10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 230, 5, 31, "Input",ExpressionUUID->"fac211aa-b870-4cf3-b23f-a0a655ec18b0"],
+Cell[813, 29, 341, 5, 35, "Output",ExpressionUUID->"d5501d8e-25af-4f4c-8323-193c00573c9c"]
+}, Open  ]],
+Cell[1169, 37, 152, 3, 31, "Input",ExpressionUUID->"b5cee4d5-3e4b-4203-80a1-da77f35f3352"],
+Cell[1324, 42, 631, 16, 31, "Input",ExpressionUUID->"eaad3f71-bbd7-499b-8bd4-05484dfb027f"],
+Cell[1958, 60, 14596, 353, 1183, "Input",ExpressionUUID->"eed616b5-0562-4cde-8273-86670b15f4c0"],
+Cell[CellGroupData[{
+Cell[16579, 417, 1113, 29, 101, "Input",ExpressionUUID->"fb762f3e-3ec9-4b2d-a4d3-72d302b81cac"],
+Cell[17695, 448, 11216, 235, 772, "Output",ExpressionUUID->"524fa454-014c-4a96-8f6e-492d3cd87b93"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28948, 688, 1232, 24, 101, "Input",ExpressionUUID->"9de631e6-66de-44af-af50-4d53950dcdb9"],
+Cell[30183, 714, 12226, 315, 147, "Output",ExpressionUUID->"ae76052b-dce6-45d0-a7d2-f481828c6dc5"]
+}, Open  ]]
+}
+]
+*)
+
